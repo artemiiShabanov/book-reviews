@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="web driver">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/libs/web driver" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/libs/web driver" recursive="false" />
+  </library>
+</component>
