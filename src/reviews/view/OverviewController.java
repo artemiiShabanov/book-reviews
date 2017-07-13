@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import reviews.Exceptions.BookNotSelectedException;
 import reviews.Exceptions.BooksNotFoundException;
-import reviews.Exceptions.EmptySetException;
+import reviews.Exceptions.ReviewsNotFoundException;
 import reviews.model.Review;
 import reviews.util.DateUtil;
 import javafx.fxml.FXML;
@@ -130,10 +130,10 @@ public class OverviewController {
         try{
             bookName.setText(mainApp.Search(nameField.getText(), authorField.getText()));
         }
-        catch (EmptySetException e){
+        catch (ReviewsNotFoundException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ooops");
-            alert.setHeaderText("There are no such books");
+            alert.setHeaderText("There are no reviews for this book");
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("resources/images/alert.png"));
 
@@ -151,6 +151,7 @@ public class OverviewController {
 
             alert.showAndWait();
         }
+
     }
 
 

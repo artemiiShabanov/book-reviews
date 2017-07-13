@@ -1,15 +1,13 @@
 package reviews;
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 
 import javafx.stage.Modality;
 import reviews.Exceptions.BookNotSelectedException;
 import reviews.Exceptions.BooksNotFoundException;
-import reviews.Exceptions.EmptySetException;
+import reviews.Exceptions.ReviewsNotFoundException;
 import reviews.model.Book;
 import reviews.model.Review;
 import reviews.util.DateUtil;
@@ -143,77 +141,44 @@ public class MainApp extends Application {
      * @param title
      * @param author
      * @return book title.
-     * @throws EmptySetException if there are no such books in the Internet.
+     * @throws ReviewsNotFoundException if there are no such books in the Internet.
      * @throws BookNotSelectedException if user did not select any book.
      */
-    public String Search(String title, String author) throws EmptySetException, BookNotSelectedException, BooksNotFoundException {
+    public String Search(String title, String author) throws ReviewsNotFoundException, BookNotSelectedException, BooksNotFoundException {
 
         HashSet<Book> bookSet;
         Book selectedBook;
+        ArrayList<Review> newRewies;
 
 
         bookSet = WebDriverUtil.findBooks(title, author);
         //TODO: 1 empty string from nowhere sometimes
 
 
-
-        /*//test data
-        try {
-            bookSet.add(new Book("Философия Java", "Брюс Эккель", new URL("http://www.ozon.ru/context/detail/id/30425811/")));
-            bookSet.add(new Book("Изучаем Java", "Кэти Сиерра, Берт Бейтс", new URL("http://www.ozon.ru/context/detail/id/7821666/")));
-            bookSet.add(new Book("Java. Эффективное программирование", "Джошуа Блох", new URL("http://www.ozon.ru/context/detail/id/21724143/")));
-            bookSet.add(new Book("Алгоритмы и структуры данных. Новая версия для Оберона", "Никлаус Вирт", new URL("http://www.ozon.ru/context/detail/id/135854372/")));
-            bookSet.add(new Book("Программирование для детей", "Кэрол Вордерман, Джон Вудкок", new URL("http://www.ozon.ru/context/detail/id/32092949/")));
-            bookSet.add(new Book("Программирование для детей", "Кэрол Вордерман, джон вудкок", new URL("http://www.ozon.ru/context/detail/id/32092949/")));
-        }
-        catch (MalformedURLException e) {
-            //NOP****************************************************************************************************
-        }*/
-
         switch(bookSet.size())
         {
             case 0:
-                throw new EmptySetException("Set is empty");
+                throw new ReviewsNotFoundException("Set is empty");
             case 1:
                 selectedBook = bookSet.iterator().next();
-                //TODO:selenium****************************************************************
-                //test data
                 reviewData.clear();
-                reviewData.add(new Review("Класс! Супер!", "Петров Вася", "ozon.ru", DateUtil.parse("16.06.2008")));
-                reviewData.add(new Review("Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(", "Петров Вася", "ozon.ru", DateUtil.parse("15.06.1919")));
-                reviewData.add(new Review("ЫВАРывапрфывдпрмдфыкирамщфывамофолкыук", "Петров Вася", "ozon.ru", DateUtil.parse("17.06.1997")));
-                reviewData.add(new Review("Класс! Супер!", "Парень", "chitai-gorod.ru", DateUtil.parse("16.09.1997")));
-                reviewData.add(new Review("Класс! Супер!", "seriy2004", "chitai-gorod.ru", DateUtil.parse("22.10.2017")));
-                reviewData.add(new Review("Завтра будет жарко", "Михаил Кутузов", "ozon.ru", DateUtil.parse("06.09.1812")));
-                reviewData.add(new Review("Класс! Супер!", "Какой-то парень", "ozon.ru", DateUtil.parse("02.12.2016")));
-                reviewData.add(new Review("Класс! Супер!", "Даша", "chitai-gorod.ru", DateUtil.parse("11.01.1997")));
-                reviewData.add(new Review("Класс! Супер!", "Иван", "ozon.ru", DateUtil.parse("22.11.2017")));
-                reviewData.add(new Review("Класс! Супер!", "Санек", "chitai-gorod.ru", DateUtil.parse("16.06.1997")));
-                reviewData.add(new Review("Класс! Супер!", "я устал придумывать имена", "ozon.ru", DateUtil.parse("04.06.2000")));
+                newRewies = WebDriverUtil.loadReviewsOzon(selectedBook.getUrl());
+                //other sites would be here
+                if (newRewies.size() == 0) {
+                    throw new ReviewsNotFoundException();
+                }
+                reviewData.addAll(newRewies);
                 break;
             default:
                 selectedBook = showChooseBookDialog(FXCollections.observableArrayList(bookSet));
                 if (selectedBook == null) throw new BookNotSelectedException("Book was not selected.");
-                //TODO:selenium****************************************************************
-                //test data
                 reviewData.clear();
-                reviewData.add(new Review("Класс! Супер!", "Петров Вася", "ozon.ru", DateUtil.parse("16.06.2008")));
-                reviewData.add(new Review("Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
-                        "(Не понравилось(Не понравилось(Не понравилось(", "Петров Вася", "ozon.ru", DateUtil.parse("15.06.1919")));
-                reviewData.add(new Review("ЫВАРывапрфывдпрмдфыкирамщфывамофолкыук", "Петров Вася", "ozon.ru", DateUtil.parse("17.06.1997")));
-                reviewData.add(new Review("Класс! Супер!", "Парень", "chitai-gorod.ru", DateUtil.parse("16.09.1997")));
-                reviewData.add(new Review("Класс! Супер!", "seriy2004", "chitai-gorod.ru", DateUtil.parse("22.10.2017")));
-                reviewData.add(new Review("Завтра будет жарко", "Михаил Кутузов", "ozon.ru", DateUtil.parse("06.09.1812")));
-                reviewData.add(new Review("Класс! Супер!", "Какой-то парень", "ozon.ru", DateUtil.parse("02.12.2016")));
-                reviewData.add(new Review("Класс! Супер!", "Даша", "chitai-gorod.ru", DateUtil.parse("11.01.1997")));
-                reviewData.add(new Review("Класс! Супер!", "Иван", "ozon.ru", DateUtil.parse("22.11.2017")));
-                reviewData.add(new Review("Класс! Супер!", "Санек", "chitai-gorod.ru", DateUtil.parse("16.06.1997")));
-                reviewData.add(new Review("Класс! Супер!", "я устал придумывать имена", "ozon.ru", DateUtil.parse("04.06.2000")));
+                newRewies = WebDriverUtil.loadReviewsOzon(selectedBook.getUrl());
+                //other sites would be here
+                if (newRewies.size() == 0) {
+                    throw new ReviewsNotFoundException();
+                }
+                reviewData.addAll(newRewies);
                 break;
         }
 
@@ -222,5 +187,21 @@ public class MainApp extends Application {
 }
 
 
+                /*//test data
+                reviewData.clear();
+                reviewData.add(new Review("Класс! Супер!", "Петров Вася", "ozon.ru", DateUtil.parse("16.06.2008")));
+                reviewData.add(new Review("Не понравилось(Не понравилось" +
+                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
+                        "(Не понравилось(Не понравилось(Не понравилось(Не понравилось" +
+                        "(Не понравилось(Не понравилось(Не понравилось(", "Петров Вася", "ozon.ru", DateUtil.parse("15.06.1919")));
+                reviewData.add(new Review("ЫВАРывапрфывдпрмдфыкирамщфывамофолкыук", "Петров Вася", "ozon.ru", DateUtil.parse("17.06.1997")));
+                reviewData.add(new Review("Класс! Супер!", "Парень", "chitai-gorod.ru", DateUtil.parse("16.09.1997")));
+                reviewData.add(new Review("Класс! Супер!", "seriy2004", "chitai-gorod.ru", DateUtil.parse("22.10.2017")));
+                reviewData.add(new Review("Завтра будет жарко", "Михаил Кутузов", "ozon.ru", DateUtil.parse("06.09.1812")));
+                reviewData.add(new Review("Класс! Супер!", "Какой-то парень", "ozon.ru", DateUtil.parse("02.12.2016")));
+                reviewData.add(new Review("Класс! Супер!", "Даша", "chitai-gorod.ru", DateUtil.parse("11.01.1997")));
+                reviewData.add(new Review("Класс! Супер!", "Иван", "ozon.ru", DateUtil.parse("22.11.2017")));
+                reviewData.add(new Review("Класс! Супер!", "Санек", "chitai-gorod.ru", DateUtil.parse("16.06.1997")));
+                reviewData.add(new Review("Класс! Супер!", "я устал придумывать имена", "ozon.ru", DateUtil.parse("04.06.2000")));*/
 
 
